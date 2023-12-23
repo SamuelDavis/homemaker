@@ -1,5 +1,5 @@
 import { For } from "solid-js";
-import { color, render } from "./state.ts";
+import { color, music, render } from "./state.ts";
 import { layerNames } from "./data.ts";
 import Integer from "./components/Integer.tsx";
 import Color from "./components/Color.tsx";
@@ -9,9 +9,10 @@ function App() {
   return (
     <main>
       <form onSubmit={(e) => e.preventDefault()}>
-        <button type="button" onClick={render.callback}>
-          Render
-        </button>
+        <fieldset>
+          <legend>Music</legend>
+          <Integer label={music.getSongName()} number={music.index} />
+        </fieldset>
         <fieldset>
           <legend>Frames</legend>
           <For each={layerNames}>

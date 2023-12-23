@@ -15,6 +15,7 @@ import {
   frameWidth,
   getFrame,
   layerNames,
+  songs,
 } from "./data.ts";
 
 export const color = createRoot(() => {
@@ -105,4 +106,33 @@ export const render = createRoot(() => {
     contexts,
     frames,
   } as const;
+});
+
+export const music = createRoot(() => {
+  const audio = new Audio();
+  audio.addEventListener("ended", () => setIndex((i) => i + 1));
+
+  const index = createSignal(0, {
+    persistenceKey: "songIndex",
+    setter: (n) => wrapN(songs.length, n),
+  });
+  const [getIndex, setIndex] = index;
+  const getSongName = createMemo(() => {
+    return songs[getIndex()]
+      .split("/")
+      .pop()!
+      .split("_")
+      .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
+      .join(" ")
+      .replace(/\..*$/, "");
+  });
+
+  createEffect(async () => {
+    const index = getIndex();
+    audio.pause();
+    audio.src = songs[index];
+    await audio.play();
+  });
+
+  return { index, getSongName };
 });

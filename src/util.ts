@@ -15,7 +15,7 @@ export function createSignal<Type>(
   value: Type,
   options?: SignalOptions<Type> & {
     persistenceKey?: string;
-    setter?: (value: Type) => Type;
+    setter?: (next: Type, previous?: Type) => Type;
   },
 ): Signal<Type> {
   const { persistenceKey, setter, ...rest } = options ?? {};
@@ -26,7 +26,9 @@ export function createSignal<Type>(
       ? _set
       : (arg: Parameters<typeof _set>[0]) =>
           _set((prev) =>
-            isSetterCallback<Type>(arg) ? setter(arg(prev)) : setter(arg),
+            isSetterCallback<Type>(arg)
+              ? setter(arg(prev), prev)
+              : setter(arg, prev),
           );
 
   if (typeof persistenceKey === "string") {
@@ -120,4 +122,8 @@ export async function loadSpriteSheetContext() {
   });
 
   return spriteSheetContext;
+}
+
+export function randomFromArray<Type>(array: Type[]): Type {
+  return array[Math.floor(Math.random() * array.length)];
 }
