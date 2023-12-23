@@ -1,6 +1,6 @@
 import {
   createEffect,
-  createSignal,
+  createSignal as _createSignal,
   Setter,
   Signal,
   SignalOptions,
@@ -10,6 +10,35 @@ import { spriteSheetHeight, spriteSheetWidth } from "./data.ts";
 import { isSetterCallback } from "./types.ts";
 
 const imageDataScalar = 4;
+
+export function createSignal<Type>(
+  value: Type,
+  options?: SignalOptions<Type> & {
+    persistenceKey?: string;
+    setter?: (value: Type) => Type;
+  },
+): Signal<Type> {
+  const { persistenceKey, setter, ...rest } = options ?? {};
+  const [get, _set] = _createSignal<Type>(value, rest);
+
+  const set =
+    setter === undefined
+      ? _set
+      : (arg: Parameters<typeof _set>[0]) =>
+          _set((prev) =>
+            isSetterCallback<Type>(arg) ? setter(arg(prev)) : setter(arg),
+          );
+
+  if (typeof persistenceKey === "string") {
+    if (persistenceKey in localStorage)
+      set(JSON.parse(localStorage.getItem(persistenceKey)!));
+    createEffect(() =>
+      localStorage.setItem(persistenceKey, JSON.stringify(get())),
+    );
+  }
+
+  return [get, set as Setter<Type>];
+}
 
 export function strToRgb(str: string): Uint8ClampedArray {
   const target = new Uint8ClampedArray(imageDataScalar);
@@ -30,30 +59,6 @@ export function createRecordWithKeys<Type>(
   keys: string[],
 ): Partial<Record<string, Type>> {
   return Object.fromEntries(keys.map((key) => [key, cb(key)]));
-}
-
-export function createSignalWithSetter<Type>(
-  cb: (value: Type) => Type,
-  value: Type,
-  options?: SignalOptions<Type>,
-): Signal<Type> {
-  const [get, _set] = createSignal(value, options);
-  const set = (arg: Parameters<Setter<Type>>[0]): Type =>
-    _set((prev) => (isSetterCallback<Type>(arg) ? cb(arg(prev)) : cb(arg)));
-
-  return [get, set as Setter<Type>] as const;
-}
-
-export function createPersistentSignal<Type>(
-  key: string,
-  value: Type,
-): Signal<Type> {
-  const item = localStorage.getItem(key);
-  const signal = createSignal<Type>(item ? (JSON.parse(item) as Type) : value);
-  createEffect(() => {
-    localStorage.setItem(key, JSON.stringify(signal[0]()));
-  });
-  return signal;
 }
 
 export function overwriteImageData(

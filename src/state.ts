@@ -1,8 +1,7 @@
-import { createEffect, createMemo, createRoot, createSignal } from "solid-js";
+import { createEffect, createMemo, createRoot } from "solid-js";
 import {
-  createPersistentSignal,
   createRecordWithKeys,
-  createSignalWithSetter,
+  createSignal,
   loadSpriteSheetContext,
   overwriteImageData,
   sliceImageData,
@@ -19,9 +18,9 @@ import {
 } from "./data.ts";
 
 export const color = createRoot(() => {
-  const primary = createPersistentSignal("primary", "#FFFFFF");
+  const primary = createSignal("#FFFFFF", { persistenceKey: "primary" });
   const [getPrimary] = primary;
-  const secondary = createPersistentSignal("secondary", "#000000");
+  const secondary = createSignal("#000000", { persistenceKey: "secondary" });
   const [getSecondary] = secondary;
   const getReplacements = createMemo(() => {
     const replacements = new Map<Uint8ClampedArray, Uint8ClampedArray>();
@@ -34,8 +33,9 @@ export const color = createRoot(() => {
 });
 
 export const render = createRoot(() => {
-  const [getSpriteSheetContext, setSpriteSheetContext] =
-    createSignal<OffscreenCanvasRenderingContext2D>();
+  const [getSpriteSheetContext, setSpriteSheetContext] = createSignal<
+    OffscreenCanvasRenderingContext2D | undefined
+  >(undefined);
   const contexts = createRecordWithKeys((name) => {
     const canvas = document.createElement("canvas");
     canvas.width = frameWidth;
@@ -49,8 +49,10 @@ export const render = createRoot(() => {
   }, layerNames);
   const frames = createRecordWithKeys(
     (name) =>
-      createSignalWithSetter((n) => wrapN(frameCountByName[name], n), 0, {
+      createSignal(0, {
         equals: false,
+        setter: (value) => wrapN(frameCountByName[name], value),
+        persistenceKey: `${name}-frame`,
       }),
     layerNames,
   );
