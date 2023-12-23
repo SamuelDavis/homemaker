@@ -31,3 +31,10 @@ export function logDefined<Type>(message: string, value: Type): Type {
   }
   return value;
 }
+
+export enum AudioState {
+  New,
+  Playing,
+  Paused,
+  Ended,
+}

@@ -2,13 +2,14 @@ import { createEffect, createMemo, createRoot } from "solid-js";
 import {
   createRecordWithKeys,
   createSignal,
+  CustomAudio,
   loadSpriteSheetContext,
   overwriteImageData,
   sliceImageData,
   strToRgb,
   wrapN,
 } from "./util.ts";
-import { assertDefined, logDefined, RGB } from "./types.ts";
+import { assertDefined, AudioState, logDefined, RGB } from "./types.ts";
 import {
   frameCountByName,
   frameHeight,
@@ -109,23 +110,27 @@ export const render = createRoot(() => {
 });
 
 export const music = createRoot(() => {
-  const audio = new Audio();
-  audio.addEventListener("ended", () => setIndex((i) => i + 1));
-
   const index = createSignal(0, {
     persistenceKey: "songIndex",
     setter: (n) => wrapN(songs.length, n),
   });
-  const [getIndex, setIndex] = index;
-  const getSongName = createMemo(() => {
-    return songs[getIndex()]
+  const [getIndex] = index;
+  const [getState, setState] = createSignal(AudioState.New);
+  const getIsPlaying = createMemo(() => getState() === AudioState.Playing);
+  const getSongName = createMemo(() =>
+    songs[getIndex()]
       .split("/")
       .pop()!
       .split("_")
       .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
       .join(" ")
-      .replace(/\..*$/, "");
-  });
+      .replace(/\..*$/, ""),
+  );
+
+  const audio = new CustomAudio();
+  audio.addEventListener("ended", () => setState(AudioState.Ended));
+  audio.addEventListener("pause", () => setState(AudioState.Paused));
+  audio.addEventListener("play", () => setState(AudioState.Playing));
 
   createEffect(async () => {
     const index = getIndex();
@@ -134,5 +139,7 @@ export const music = createRoot(() => {
     await audio.play();
   });
 
-  return { index, getSongName };
+  const togglePlaying = () => (getIsPlaying() ? audio.pause() : audio.play());
+
+  return { index, getSongName, getIsPlaying, togglePlaying };
 });

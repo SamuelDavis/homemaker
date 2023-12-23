@@ -127,3 +127,10 @@ export async function loadSpriteSheetContext() {
 export function randomFromArray<Type>(array: Type[]): Type {
   return array[Math.floor(Math.random() * array.length)];
 }
+
+export class CustomAudio extends Audio {
+  pause() {
+    super.pause();
+    this.dispatchEvent(new Event("pause"));
+  }
+}
