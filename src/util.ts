@@ -53,7 +53,7 @@ export function strToRgb(str: string): Uint8ClampedArray {
 }
 
 export function wrapN(length: number, n: number): number {
-  return (n + length) % length;
+  return Number.isInteger(n) ? (n + length) % length : 0;
 }
 
 export function createRecordWithKeys<Type>(

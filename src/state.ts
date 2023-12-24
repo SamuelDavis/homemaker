@@ -112,7 +112,7 @@ export const render = createRoot(() => {
 export const music = createRoot(() => {
   const index = createSignal(0, {
     persistenceKey: "songIndex",
-    setter: (n) => wrapN(songs.length, n),
+    setter: (value) => wrapN(songs.length, value),
   });
   const [getIndex] = index;
   const [getState, setState] = createSignal(AudioState.New);
