@@ -143,7 +143,6 @@ export const music = createRoot(() => {
 
   createEffect(async () => {
     const index = getIndex();
-    audio.pause();
     audio.src = songs[index];
     await audio.play();
   });
