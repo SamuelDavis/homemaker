@@ -66,10 +66,17 @@ export function createRecordWithKeys<Type>(
 export function overwriteImageData(
   data: Uint8ClampedArray,
   replacements: Map<Uint8ClampedArray, Uint8ClampedArray>,
+  variance = 0.1,
 ): void {
+  variance *= 255;
   for (let i = 0; i < data.length; i += imageDataScalar)
     replacements.forEach((target, source) => {
-      if (source.every((n, j) => data[i + j] === n))
+      if (
+        source.every((n, j) => {
+          const check = data[i + j];
+          return n - variance <= check && n + variance >= check;
+        })
+      )
         target.forEach((n, j) => (data[i + j] = n));
     });
 }

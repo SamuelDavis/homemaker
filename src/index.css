@@ -39,6 +39,10 @@ body {
   background-size: calc(var(--size) * 2) calc(var(--size) * 2);
 }
 
+form {
+  background-color: white;
+}
+
 canvas {
   --width: 0;
   --height: 0;

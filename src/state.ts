@@ -124,7 +124,7 @@ export const music = createRoot(() => {
       .split("_")
       .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
       .join(" ")
-      .replace(/\..*$/, ""),
+      .replace(/[.\-].*$/, ""),
   );
 
   const audio = new CustomAudio();
