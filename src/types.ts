@@ -1,3 +1,5 @@
+import { JSX, Signal } from "solid-js";
+
 export const RGB = {
   Red: new Uint8ClampedArray([255, 0, 0, 255]),
   Green: new Uint8ClampedArray([0, 255, 0, 255]),
@@ -38,3 +40,11 @@ export enum AudioState {
   Paused,
   Ended,
 }
+
+export type InputProps<
+  Type,
+  Parent extends keyof JSX.IntrinsicElements = "input",
+> = {
+  label: string;
+  signal: Signal<Type>;
+} & JSX.IntrinsicElements[Parent];

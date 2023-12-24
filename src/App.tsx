@@ -4,6 +4,7 @@ import { layerNames } from "./data.ts";
 import Integer from "./components/Integer.tsx";
 import Color from "./components/Color.tsx";
 import { assertDefined } from "./types.ts";
+import Range from "./components/Range.tsx";
 
 function App() {
   return (
@@ -11,7 +12,14 @@ function App() {
       <form onSubmit={(e) => e.preventDefault()}>
         <fieldset>
           <legend>Music</legend>
-          <Integer label={music.getSongName()} number={music.index} />
+          <Integer label={music.getSongName()} signal={music.index} />
+          <Range
+            label="Volume"
+            signal={music.volume}
+            min={0}
+            max={1}
+            step={0.01}
+          />
           <button type="button" onClick={music.togglePlaying}>
             {music.getIsPlaying() ? "Pause" : "Play"}
           </button>
@@ -22,7 +30,7 @@ function App() {
             {(name) => (
               <Integer
                 label={name}
-                number={assertDefined(
+                signal={assertDefined(
                   `${name} frame signal`,
                   render.frames[name],
                 )}
@@ -30,8 +38,8 @@ function App() {
             )}
           </For>
         </fieldset>
-        <Color label={"Primary"} color={color.primary} />
-        <Color label={"Secondary"} color={color.secondary} />
+        <Color label={"Primary"} signal={color.primary} />
+        <Color label={"Secondary"} signal={color.secondary} />
       </form>
       <article>
         <For each={layerNames}>

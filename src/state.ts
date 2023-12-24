@@ -116,6 +116,11 @@ export const music = createRoot(() => {
   });
   const [getIndex] = index;
   const [getState, setState] = createSignal(AudioState.New);
+  const volume = createSignal(0, {
+    persistenceKey: "volume",
+    setter: (value) => Math.max(0, Math.min(1, value)),
+  });
+  const [getVolume] = volume;
   const getIsPlaying = createMemo(() => getState() === AudioState.Playing);
   const getSongName = createMemo(() =>
     songs[getIndex()]
@@ -132,6 +137,10 @@ export const music = createRoot(() => {
   audio.addEventListener("pause", () => setState(AudioState.Paused));
   audio.addEventListener("play", () => setState(AudioState.Playing));
 
+  createEffect(() => {
+    audio.volume = getVolume();
+  });
+
   createEffect(async () => {
     const index = getIndex();
     audio.pause();
@@ -141,5 +150,5 @@ export const music = createRoot(() => {
 
   const togglePlaying = () => (getIsPlaying() ? audio.pause() : audio.play());
 
-  return { index, getSongName, getIsPlaying, togglePlaying };
+  return { index, getSongName, getIsPlaying, togglePlaying, volume };
 });
