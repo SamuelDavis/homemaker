@@ -1,5 +1,4 @@
 html {
-  box-sizing: border-box;
   padding: 0;
   margin: 0;
   width: 100vw;
@@ -46,7 +45,6 @@ form {
 canvas {
   --width: 0;
   --height: 0;
-  border: 1px solid black;
   width: calc(var(--width) * 1em);
   height: calc(var(--height) * 1em);
   image-rendering: pixelated;
@@ -55,4 +53,42 @@ canvas {
 article {
   display: flex;
   flex-direction: column;
+}
+
+section {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+section button {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+label output {
+  min-width: 5ch;
+  text-align: right;
+}
+
+button:hover .material-icons {
+  animation: pulse 1s infinite linear;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
 }

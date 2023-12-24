@@ -12,10 +12,6 @@ export function isSetterCallback<Type>(
   return typeof value === "function";
 }
 
-export function isSetterValue<Type>(value: any): value is Type {
-  return !isSetterCallback(value);
-}
-
 export function assertDefined<Type>(
   message: string,
   value: Type | undefined | null,
@@ -41,10 +37,16 @@ export enum AudioState {
   Ended,
 }
 
-export type InputProps<
-  Type,
-  Parent extends keyof JSX.IntrinsicElements = "input",
-> = {
+export type InputProps<Type> = WrapperProps<"input", never> & {
   label: string;
   signal: Signal<Type>;
-} & JSX.IntrinsicElements[Parent];
+};
+
+export type WrapperProps<
+  Parent extends keyof JSX.IntrinsicElements,
+  Children extends JSX.Element = JSX.Element,
+> = never extends Children
+  ? JSX.IntrinsicElements[Parent]
+  : JSX.IntrinsicElements[Parent] & {
+      children: Children;
+    };
