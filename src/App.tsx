@@ -12,7 +12,7 @@ function App() {
         <fieldset>
           <legend>Music</legend>
           <Integer label={music.getSongName()} number={music.index} />
-          <button onClick={music.togglePlaying}>
+          <button type="button" onClick={music.togglePlaying}>
             {music.getIsPlaying() ? "Pause" : "Play"}
           </button>
         </fieldset>
