@@ -1,7 +1,7 @@
 import { frames, meta } from "./assets/home.json";
-import music1 from "./assets/deck_the_halls.opus";
-import music2 from "./assets/jingle_bells.opus";
-import music3 from "./assets/we_wish_you_a_merry_christmas.opus";
+import music1 from "./assets/deck_the_halls.mp3";
+import music2 from "./assets/jingle_bells.mp3";
+import music3 from "./assets/we_wish_you_a_merry_christmas.mp3";
 
 export const songs = [music1, music2, music3];
 export const layerNames = meta.layers.reverse().map((layer) => layer.name);
