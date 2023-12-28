@@ -1,76 +1,58 @@
-html {
-  padding: 0;
-  margin: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: cornflowerblue;
+:root {
+  --spacer: 1em;
 }
 
 body {
-  --a: slategray;
-  --b: transparent;
-  --size: 16px;
-
+  min-width: 100vw;
+  min-height: 100vh;
   box-sizing: border-box;
-  padding: 1em;
+  padding: var(--spacer);
   margin: 0;
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(
-      45deg,
-      var(--a) 25%,
-      var(--b) 25%,
-      var(--b) 75%,
-      var(--a) 75%,
-      var(--a)
-    ),
-    linear-gradient(
-      45deg,
-      var(--a) 25%,
-      var(--b) 25%,
-      var(--b) 75%,
-      var(--a) 75%,
-      var(--a)
-    );
-  background-position:
-    0 0,
-    var(--size) var(--size);
-  background-size: calc(var(--size) * 2) calc(var(--size) * 2);
+
+  display: flex;
+  flex-direction: column;
 }
 
-form {
-  background-color: white;
+main {
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (orientation: landscape) {
+  main {
+    flex-direction: row;
+  }
+}
+
+article {
+  display: grid;
+  place-content: center;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 canvas {
   --width: 0;
   --height: 0;
-  width: calc(var(--width) * 1em);
-  height: calc(var(--height) * 1em);
+  width: calc(var(--width) * 8px);
+  height: calc(var(--height) * 8px);
   image-rendering: pixelated;
-}
-
-article {
-  display: flex;
-  flex-direction: column;
 }
 
 section {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1em;
-}
-
-section button {
-  background-color: transparent;
-  border: 0;
-  cursor: pointer;
+  gap: var(--spacer);
 }
 
 label {
   display: flex;
   align-items: center;
-  gap: 1em;
+  gap: var(--spacer);
 }
 
 label output {
@@ -78,17 +60,31 @@ label output {
   text-align: right;
 }
 
-button:hover .material-icons {
-  animation: pulse 1s infinite linear;
+label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacer);
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
+label output {
+  min-width: 5ch;
+  text-align: right;
+}
 
-  50% {
-    transform: scale(1.2);
-  }
+.controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.hidden:not(.controls) {
+  display: none;
+}
+
+.hidden.controls {
+  opacity: 0;
+}
+
+.hidden.controls:hover {
+  opacity: initial;
 }

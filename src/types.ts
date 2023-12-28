@@ -24,8 +24,8 @@ export function assertDefined<Type>(
 export function logDefined<Type>(message: string, value: Type): Type {
   try {
     assertDefined(message, value);
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
   return value;
 }

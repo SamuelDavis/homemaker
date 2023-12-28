@@ -141,3 +141,8 @@ export class CustomAudio extends Audio {
     this.dispatchEvent(new Event("pause"));
   }
 }
+
+export function preventDefault(event: Event) {
+  event.preventDefault();
+}
+

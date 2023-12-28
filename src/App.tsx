@@ -5,11 +5,21 @@ import Color from "./components/Color.tsx";
 import { assertDefined } from "./types.ts";
 import Range from "./components/Range.tsx";
 import Carousel from "./components/Carousel.tsx";
+import { preventDefault } from "./util.ts";
+
+function toggleControls(_: MouseEvent) {
+  document.querySelector("form")?.classList.toggle("hidden");
+  for (const button of document.querySelectorAll("button"))
+    button.classList.toggle("hidden");
+}
 
 function App() {
   return (
     <main>
-      <form onSubmit={(e) => e.preventDefault()}>
+      <button class="controls" onClick={toggleControls}>
+        <i class="material-icons">tune</i>
+      </button>
+      <form onSubmit={preventDefault}>
         <fieldset>
           <legend>Music</legend>
           <Carousel signal={music.index}>{music.getSongName()}</Carousel>
@@ -42,7 +52,7 @@ function App() {
             <Carousel
               signal={assertDefined(
                 `${name} frame signal`,
-                render.frames[name],
+                render.frames[name]
               )}
             >
               {assertDefined(`${name} context`, render.contexts[name]).canvas}
@@ -50,7 +60,6 @@ function App() {
           )}
         </For>
       </article>
-      <footer></footer>
     </main>
   );
 }
