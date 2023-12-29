@@ -1,5 +1,6 @@
 import { children, Component, Signal, splitProps } from "solid-js";
 import { WrapperProps } from "../types.ts";
+import IconButton from "./IconButton.tsx";
 
 const Carousel: Component<
   WrapperProps<"section"> & {
@@ -14,13 +15,9 @@ const Carousel: Component<
 
   return (
     <section {...propsRest}>
-      <button onClick={decrement}>
-        <i class="material-icons">chevron_left</i>
-      </button>
+      <IconButton icon="chevron_left" onClick={decrement} />
       {getChildren()}
-      <button onClick={increment}>
-        <i class="material-icons">chevron_right</i>
-      </button>
+      <IconButton icon="chevron_right" onClick={increment} />
     </section>
   );
 };

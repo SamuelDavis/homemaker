@@ -19,6 +19,16 @@ import {
   songs,
 } from "./data.ts";
 
+export const ui = createRoot(() => {
+  const [getHidden, setHidden] = createSignal(false);
+  const toggleHidden = () => setHidden((prev) => !prev);
+  const getHiddenClassList = createMemo(() => ({
+    hidden: getHidden(),
+  }));
+
+  return { toggleHidden, getHiddenClassList };
+});
+
 export const color = createRoot(() => {
   const primary = createSignal("#FFFFFF", { persistenceKey: "primary" });
   const [getPrimary] = primary;
@@ -56,13 +66,13 @@ export const render = createRoot(() => {
         setter: (value) => wrapN(frameCountByName[name], value),
         persistenceKey: `${name}-frame`,
       }),
-    layerNames,
+    layerNames
   );
 
   function callback() {
     const spriteSheetContext = logDefined(
       "sprite sheet context",
-      getSpriteSheetContext(),
+      getSpriteSheetContext()
     );
     if (!spriteSheetContext) return;
     const colorReplacements = color.getReplacements();
@@ -72,7 +82,7 @@ export const render = createRoot(() => {
       0,
       0,
       width,
-      height,
+      height
     );
     overwriteImageData(spriteSheetImageData.data, colorReplacements);
 
@@ -80,7 +90,7 @@ export const render = createRoot(() => {
       const index = assertDefined(`${name} frame`, frames[name]?.[0]());
       const frame = assertDefined(
         `frame ${index} of ${name}`,
-        getFrame(name, index),
+        getFrame(name, index)
       );
       const context = assertDefined(`${name} context`, contexts[name]);
       const slice = sliceImageData(
@@ -88,7 +98,7 @@ export const render = createRoot(() => {
         frame.x,
         frame.y,
         frame.w,
-        frame.h,
+        frame.h
       );
 
       requestAnimationFrame(function () {
@@ -130,7 +140,7 @@ export const music = createRoot(() => {
       .split("_")
       .map((word) => `${word[0].toUpperCase()}${word.slice(1)}`)
       .join(" ")
-      .replace(/[.\-].*$/, ""),
+      .replace(/[.\-].*$/, "")
   );
 
   const audio = new CustomAudio();
