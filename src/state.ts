@@ -1,5 +1,6 @@
 import { createEffect, createMemo, createRoot } from "solid-js";
 import {
+  clearImageData,
   createRecordWithKeys,
   createSignal,
   CustomAudio,
@@ -15,6 +16,7 @@ import {
   frameHeight,
   frameWidth,
   getFrame,
+  getLightingFrame,
   layerNames,
   songs,
 } from "./data.ts";
@@ -48,6 +50,12 @@ export const render = createRoot(() => {
   const [getSpriteSheetContext, setSpriteSheetContext] = createSignal<
     OffscreenCanvasRenderingContext2D | undefined
   >(undefined);
+  const lightingCanvas = new OffscreenCanvas(frameWidth, frameHeight);
+  const lightingContext = assertDefined(
+    "lighting context",
+    lightingCanvas.getContext("2d")
+  );
+
   const contexts = createRecordWithKeys((name) => {
     const canvas = document.createElement("canvas");
     canvas.width = frameWidth;
@@ -88,23 +96,45 @@ export const render = createRoot(() => {
 
     for (const name of layerNames) {
       const index = assertDefined(`${name} frame`, frames[name]?.[0]());
-      const frame = assertDefined(
+      const imageFrame = assertDefined(
         `frame ${index} of ${name}`,
         getFrame(name, index)
       );
+      const lightingFrame = getLightingFrame(name, index);
       const context = assertDefined(`${name} context`, contexts[name]);
-      const slice = sliceImageData(
+      const imageSlice = sliceImageData(
         spriteSheetImageData,
-        frame.x,
-        frame.y,
-        frame.w,
-        frame.h
+        imageFrame.x,
+        imageFrame.y,
+        imageFrame.w,
+        imageFrame.h
       );
+
+      const lightingSlice = lightingFrame
+        ? sliceImageData(
+            spriteSheetImageData,
+            lightingFrame.x,
+            lightingFrame.y,
+            lightingFrame.w,
+            lightingFrame.h
+          )
+        : undefined;
 
       requestAnimationFrame(function () {
         const { width, height } = context.canvas;
         context.clearRect(0, 0, width, height);
-        context.putImageData(slice, 0, 0);
+        context.putImageData(imageSlice, 0, 0);
+        context.globalAlpha = 0.5;
+        if (lightingSlice) {
+          lightingContext.clearRect(
+            0,
+            0,
+            lightingContext.canvas.width,
+            lightingContext.canvas.height
+          );
+          lightingContext.putImageData(lightingSlice, 0, 0);
+          context.drawImage(lightingContext.canvas, 0, 0);
+        }
       });
     }
   }
