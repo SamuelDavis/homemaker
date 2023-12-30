@@ -1,6 +1,5 @@
 import { createEffect, createMemo, createRoot } from "solid-js";
 import {
-  clearImageData,
   createRecordWithKeys,
   createSignal,
   CustomAudio,
