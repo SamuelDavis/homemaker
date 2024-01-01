@@ -30,6 +30,7 @@ const Controls = () => {
         <section>
           <Color label={"Primary"} signal={color.primary} />
           <Color label={"Secondary"} signal={color.secondary} />
+          <Color label={"Tertiary"} signal={color.tertiary} />
         </section>
       </fieldset>
     </form>
