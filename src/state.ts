@@ -1,3 +1,5 @@
+import textureSrc from "./assets/texture.png";
+import textureData from "./assets/texture.json";
 import { createEffect, createMemo, createRoot } from "solid-js";
 import {
   createRecordWithKeys,
@@ -79,6 +81,37 @@ export const render = createRoot(() => {
     layerNames
   );
 
+  const textureEnabled = createSignal(false);
+  const [getTextureEnabled] = textureEnabled;
+  const [getRenderTexture, setRenderTexture] = createSignal<
+    OffscreenCanvasRenderingContext2D | undefined
+  >(undefined);
+  const textureCanvas = new OffscreenCanvas(frameWidth, frameHeight);
+  const textureContext = assertDefined(
+    "texture context",
+    textureCanvas.getContext("2d")
+  );
+  const textureImage = new Image(
+    textureData.meta.size.w,
+    textureData.meta.size.h
+  );
+  textureImage.src = textureSrc;
+  textureImage.onload = () => {
+    const pattern = assertDefined(
+      "texture pattern",
+      textureContext.createPattern(textureImage, "repeat")
+    );
+    textureContext.fillStyle = pattern;
+    textureContext.globalAlpha = 0.5;
+    textureContext.fillRect(
+      0,
+      0,
+      textureContext.canvas.width,
+      textureContext.canvas.height
+    );
+    setRenderTexture(textureContext);
+  };
+
   function callback() {
     const spriteSheetContext = logDefined(
       "sprite sheet context",
@@ -96,6 +129,7 @@ export const render = createRoot(() => {
     );
     overwriteImageData(spriteSheetImageData.data, colorReplacements);
 
+    const textureEnabled = getTextureEnabled();
     for (const name of layerNames) {
       const index = assertDefined(`${name} frame`, frames[name]?.[0]());
       const imageFrame = assertDefined(
@@ -103,7 +137,8 @@ export const render = createRoot(() => {
         getFrame(name, index)
       );
       const lightingFrame = getLightingFrame(name, index);
-      const context = assertDefined(`${name} context`, contexts[name]);
+      const renderTexture = getRenderTexture();
+      const renderContext = assertDefined(`${name} context`, contexts[name]);
       const imageSlice = sliceImageData(
         spriteSheetImageData,
         imageFrame.x,
@@ -123,10 +158,16 @@ export const render = createRoot(() => {
         : undefined;
 
       requestAnimationFrame(function () {
-        const { width, height } = context.canvas;
-        context.clearRect(0, 0, width, height);
-        context.putImageData(imageSlice, 0, 0);
-        context.globalAlpha = 0.5;
+        const { width, height } = renderContext.canvas;
+        renderContext.clearRect(0, 0, width, height);
+        renderContext.putImageData(imageSlice, 0, 0);
+        renderContext.globalAlpha = 0.5;
+        if (textureEnabled && renderTexture) {
+          renderContext.save();
+          renderContext.globalCompositeOperation = "source-atop";
+          renderContext.drawImage(textureContext.canvas, 0, 0);
+          renderContext.restore();
+        }
         if (lightingSlice) {
           lightingContext.clearRect(
             0,
@@ -135,7 +176,7 @@ export const render = createRoot(() => {
             lightingContext.canvas.height
           );
           lightingContext.putImageData(lightingSlice, 0, 0);
-          context.drawImage(lightingContext.canvas, 0, 0);
+          renderContext.drawImage(lightingContext.canvas, 0, 0);
         }
       });
     }
@@ -148,6 +189,7 @@ export const render = createRoot(() => {
     callback,
     contexts,
     frames,
+    textureEnabled,
   } as const;
 });
 
