@@ -1,8 +1,8 @@
 import { For } from "solid-js";
-import { layerNames } from "../data.ts";
-import { render } from "../state.ts";
-import { assertDefined } from "../types.ts";
-import Carousel from "./Carousel.tsx";
+import { layerNames } from "../data";
+import { render } from "../state";
+import { assertDefined } from "../types";
+import Carousel from "./Carousel";
 
 const Graphics = () => {
   return (

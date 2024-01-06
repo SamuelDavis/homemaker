@@ -6,8 +6,8 @@ import {
   SignalOptions,
 } from "solid-js";
 import src from "./assets/home.png";
-import { spriteSheetHeight, spriteSheetWidth } from "./data.ts";
-import { isSetterCallback } from "./types.ts";
+import { spriteSheetHeight, spriteSheetWidth } from "./data";
+import { isSetterCallback } from "./types";
 
 const imageDataScalar = 4;
 

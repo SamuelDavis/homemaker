@@ -1,7 +1,7 @@
-import IconButton from "./components/IconButton.tsx";
-import Controls from "./components/Controls.tsx";
-import Graphics from "./components/Graphics.tsx";
-import { ui } from "./state.ts";
+import IconButton from "./components/IconButton";
+import Controls from "./components/Controls";
+import Graphics from "./components/Graphics";
+import { ui } from "./state";
 
 function App() {
   return (

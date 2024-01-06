@@ -1,4 +1,4 @@
-import { color, music, ui, render } from "../state";
+import { music, render, color, ui } from "../state";
 import { preventDefault } from "../util";
 import Carousel from "./Carousel";
 import Color from "./Color";

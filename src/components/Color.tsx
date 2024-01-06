@@ -1,5 +1,5 @@
 import { Component, splitProps } from "solid-js";
-import { InputProps } from "../types.ts";
+import { InputProps } from "../types";
 
 const Color: Component<InputProps<string>> = (props) => {
   const [propsLocal, propsRest] = splitProps(props, ["label", "signal"]);

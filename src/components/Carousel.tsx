@@ -1,6 +1,6 @@
 import { children, Component, Signal, splitProps } from "solid-js";
-import { WrapperProps } from "../types.ts";
-import IconButton from "./IconButton.tsx";
+import { WrapperProps } from "../types";
+import IconButton from "./IconButton";
 
 const Carousel: Component<
   WrapperProps<"section"> & {
