@@ -3,10 +3,11 @@ import textureData from "../assets/texture.json";
 import { createEffect, createRoot } from "solid-js";
 import {
     createRecordWithKeys,
-    createSignal, loadSpriteSheetContext,
+    createSignal,
+    loadSpriteSheetContext,
     overwriteImageData,
     sliceImageData,
-    wrapN
+    wrapN,
 } from "../util";
 import { assertDefined, logDefined } from "../types";
 import {
@@ -15,7 +16,7 @@ import {
     frameWidth,
     getFrame,
     getLightingFrame,
-    layerNames
+    layerNames,
 } from "../data";
 import { color } from "./color";
 
@@ -41,15 +42,18 @@ export const render = createRoot(() => {
         return context;
     }, layerNames);
     const frames = createRecordWithKeys(
-        (name) => createSignal(0, {
-            equals: false,
-            setter: (value) => wrapN(frameCountByName[name], value),
-            persistenceKey: `${name}-frame`,
-        }),
+        (name) =>
+            createSignal(0, {
+                equals: false,
+                setter: (value) => wrapN(frameCountByName[name], value),
+                persistenceKey: `${name}-frame`,
+            }),
         layerNames
     );
 
-    const textureEnabled = createSignal(false);
+    const textureEnabled = createSignal(false, {
+        persistenceKey: "texture-enabled",
+    });
     const [getTextureEnabled] = textureEnabled;
     const [getRenderTexture, setRenderTexture] = createSignal<
         OffscreenCanvasRenderingContext2D | undefined
@@ -106,7 +110,10 @@ export const render = createRoot(() => {
             );
             const lightingFrame = getLightingFrame(name, index);
             const renderTexture = getRenderTexture();
-            const renderContext = assertDefined(`${name} context`, contexts[name]);
+            const renderContext = assertDefined(
+                `${name} context`,
+                contexts[name]
+            );
             const imageSlice = sliceImageData(
                 spriteSheetImageData,
                 imageFrame.x,
@@ -117,15 +124,15 @@ export const render = createRoot(() => {
 
             const lightingSlice = lightingFrame
                 ? sliceImageData(
-                    spriteSheetImageData,
-                    lightingFrame.x,
-                    lightingFrame.y,
-                    lightingFrame.w,
-                    lightingFrame.h
-                )
+                      spriteSheetImageData,
+                      lightingFrame.x,
+                      lightingFrame.y,
+                      lightingFrame.w,
+                      lightingFrame.h
+                  )
                 : undefined;
 
-            requestAnimationFrame(function() {
+            requestAnimationFrame(function () {
                 const { width, height } = renderContext.canvas;
                 renderContext.clearRect(0, 0, width, height);
                 renderContext.putImageData(imageSlice, 0, 0);
@@ -160,4 +167,3 @@ export const render = createRoot(() => {
         textureEnabled,
     } as const;
 });
-
